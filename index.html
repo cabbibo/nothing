@@ -1,0 +1,443 @@
+<!--
+
+Hi! 
+
+If you are reading this, its most likely because you code.
+
+
+
+-->
+
+
+
+<html>
+
+
+
+  <head>
+    <style>
+      body{ margin:0px;font-size:30px;
+      font-family: "Calibre-Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Helmut, Arial, "Lucida Grande", sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      color: #ffffff; }
+      
+
+      #infoBody{
+      z-index: 999;
+      position: absolute;
+      right: 20px;
+      //width: 20px;
+      background: none;
+    }
+      html{ overflow: hidden }
+    </style>
+
+
+      <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+      <meta name="twitter:card" content="photo">
+      <meta name="twitter:site" content="@cabbibo">
+      <meta name="twitter:creator" content="@cabbibo">
+      <meta name="twitter:url" content="http://cabbi.bo/light">
+      <meta name="twitter:title" content="Love is All">
+      <meta name="twitter:description" content="Though it is quiet, love has more power than the darkness ever will.">
+      <meta name="twitter:creator" content="@cabbibo">
+      <meta name="twitter:image" content="http://cabbi.bo/light/image.png">
+      <meta name="twitter:image:width" content="1440">
+      <meta name="twitter:image:height" content="900">
+      <meta name="twitter:domain" content="cabbi.bo">
+      <meta itemprop="name" content="Cabbi.bo">
+      <meta itemprop="description" content="Though it is quiet, love has more power than the darkness ever will.">
+      <meta itemprop="image" src="http://cabbi.bo/light/image.png">
+      <meta property="og:title" content="Though it is quiet, love has more power than the darkness ever will.">
+      <meta property="og:type" content="website">
+      <meta property="og:url" content="http://cabbi.bo/light">
+      <meta property="og:image" content="http://cabbi.bo/light/image.png"/>
+      <meta property="og:site_name" content="Cabbi.bo">
+      <meta property="og:description" content="Though it is quiet, love has more power than the darkness ever will.">
+
+  </head>
+
+  <body>
+
+    <script src="lib/three.min.js">             </script>
+    <script src="lib/jquery.min.js">            </script>
+    <script src="lib/ShaderLoader.js">          </script>
+
+    <script src="lib/ScrollControls.js">        </script>
+    <script src="lib/ObjectControls.js">        </script>
+
+
+    <script src="lib/OBJLoader.js">             </script>
+    
+    <script src="fonts/PTMono.js">              </script>
+    <script src="TextParticles.js">             </script>
+
+  
+    <script src="text/noThing.js">              </script>
+
+    <script src="Light.js">                     </script>
+    <script src="Connections.js">               </script>
+    <script src="Darkness.js">                  </script>
+
+    <script src="js/crystalGeo.js">             </script>
+    <script src="js/RayGeo.js">                 </script>
+    <script src="js/ConnectionGeo.js">          </script>
+    <script src="js/Link.js">                   </script>
+    <script src="js/DarknessGeo.js">            </script>
+
+
+    <script src="js/Story.js">                  </script>
+   
+
+    <script>
+
+      var T = THREE;
+
+
+      var camera, renderer, scene , controls , clock;
+      
+      var textParticles;
+
+      var font = PTMono( 'fonts/PTMono.png' );
+
+      var time = { type:"f" , value: 1 }
+      var shaders = new ShaderLoader( 'examples/fade/shaders' );
+
+      var manager = new THREE.LoadingManager();
+
+
+      var loader = new THREE.OBJLoader( manager );
+      var neededToLoad = 0;
+      var loaded = 0;
+
+      var G = {}
+      G.sounds = {}
+      G.textures = {}
+      G.models = {}
+
+
+      function onLoad(){
+        loaded ++;
+        if( neededToLoad == loaded ){
+          init();
+          animate(); 
+        }
+      }
+
+      function loadOBJ( file , callback ){
+        neededToLoad += 1;
+        loader.load( file, function ( object ) {
+
+         // console.log( object );
+        object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {
+          callback(child);
+        }});
+        onLoad();
+
+        });
+      }
+     
+
+      G.story = new Story();
+
+
+
+      manager.onProgress = function ( item, loaded, total ) {
+          console.log( item, loaded, total );
+        };
+
+    
+
+      loadOBJ( 'models/heart/heartNoBG.OBJ', function(child){
+        console.log("SDSD");
+        console.log( child );
+        G.models.heart = child;
+      })
+
+
+      G.models.snowflakes = [];
+      loadOBJ( 'models/snowflakes/snow1.obj', function(child){
+        console.log("SDSD");
+        console.log( child );
+        G.models.snowflakes[0] = child;
+      })
+        
+
+
+     
+
+      neededToLoad += 1;
+      shaders.shaderSetLoaded = function(){
+        onLoad();
+      }
+
+
+
+
+
+
+      shaders.load( 'vs-text' , 'text' , 'vertex'   );
+      shaders.load( 'fs-text' , 'text' , 'fragment' );
+
+      shaders.load( 'vs-title' , 'title' , 'vertex'   );
+      shaders.load( 'fs-title' , 'title' , 'fragment' );
+
+
+      shaders.load( 'vs-gem' , 'gem' , 'vertex'   );
+      shaders.load( 'fs-gem' , 'gem' , 'fragment' );
+
+      shaders.load( 'vs-ray' , 'ray' , 'vertex'   );
+      shaders.load( 'fs-ray' , 'ray' , 'fragment' );
+
+      shaders.load( 'vs-darkness' , 'darkness' , 'vertex'   );
+      shaders.load( 'fs-darkness' , 'darkness' , 'fragment' );
+
+
+      shaders.load( 'vs-connections' , 'connections' , 'vertex'   );
+      shaders.load( 'fs-connections' , 'connections' , 'fragment' );
+
+      var uniforms = {
+        
+        dT:       { type:"f"  , value : 0             },
+        time:     { type:"f"  , value : 0             },
+        progress: { type:"f"  , value : 0             },
+        iModelMat:{ type:"m4" , value: new THREE.Matrix4() }
+      }
+
+      var linkInfo = [];
+
+      linkInfo.push({
+        title: "Models By Sam Rolfes",
+        href: "http://cabbi.bo"
+      });
+
+      linkInfo.push({
+        title: "Audio by Yagmur",
+        href: "http://cabbi.bo"
+      });
+
+      linkInfo.push({
+        title: "Story / Code by Cabbibo",
+        href: "http://cabbi.bo/"
+      });
+
+      
+      linkInfo.push({
+        title: "Share on Twitter",
+        href: "http://twitter.com/share?text=Love%20is%20all.%20It%20is%20more%20than%20hate,%20more%20than%20fear,%20and%20though%20it%20is%20quiet%20it%20has%20more%20power%20than%20the%20dark%20ever%20will%3A&url=http://cabbi.bo/light/"
+      });
+
+
+
+
+
+      function init(){
+
+
+       infoBody = document.createElement("div");
+
+       infoBody.id ="infoBody";
+        //this.infoBody.innerHTML = "scroll  <br/> &#x2193; &#x2193; &#x2193;"
+       infoBody.innerHTML = "scroll  <br/> &#x2193; &#x2193; &#x2193;"
+
+       document.body.appendChild( infoBody );
+
+
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+
+        camera = new THREE.PerspectiveCamera( 65 , w/h , .001 , 10 );
+        camera.position.z = 1;
+
+        controls = new ScrollControls( camera );
+        
+        clock = new THREE.Clock();
+        
+        scene = new THREE.Scene();
+
+
+
+
+        var dpr = window.devicePixelRatio || 1;
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio( dpr );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        document.body.appendChild( renderer.domElement );
+
+        /*
+
+           Object Control stuff!!!!
+
+        */ 
+
+        objectControls = new ObjectControls( camera );
+
+
+        
+
+        var vs = shaders.vertexShaders.text;
+        var fs = shaders.fragmentShaders.text;
+
+
+
+
+
+       /* title = new TextParticles( "I Love You" , font , vs , fs , {
+         letterWidth: .05,
+         lineLength: 29,
+         uniforms:{
+          time: time,
+         }  
+        });
+        
+
+        title.position.x = -title.totalWidth / 2;
+       // title.position.z = -.2;
+        title.position.y = .3;*/
+
+
+
+
+        // Passage comes from seperate file
+        textParticles = new TextParticles( noThing , font , vs , fs , {
+         letterWidth: .03,
+         lineLength: 50,
+         uniforms:{
+          time: time,
+         }  
+        });
+        
+        scene.add( textParticles );
+       // scene.add( title );
+
+        //textParticles.material.uniforms.time.value = 1.;
+
+        textParticles.position.x = - textParticles.totalWidth / 2;
+
+        controls.minPos     = -30.7;
+        controls.maxPos     =  0;
+        controls.multiplier =  .000003 * textParticles.totalHeight;
+        controls.dampening  = .95;
+
+
+        links = [];
+        for( var i = 0; i < linkInfo.length; i++ ){
+
+         links[i] = new Link(font , linkInfo[i].title ,linkInfo[i].href  );
+         links[i].add( new THREE.Vector3( 0,-i*.15 - 30.3, 0));
+
+        }
+
+
+
+
+        G.models.heart.material = new THREE.MeshNormalMaterial({
+                side: THREE.DoubleSide
+              });
+
+        G.models.heart.scale.multiplyScalar( .1);
+        G.models.heart.rotation.y = 1.5* Math.PI;
+        G.models.heart.position.y = -3.5;
+        G.models.heart.position.z = -1;
+        //G.
+
+        //child.material.map = texture;
+
+        scene.add( G.models.heart );
+
+
+
+
+
+
+
+        firstLight = new Light();
+
+        //firstLight.add();
+
+        var l = new THREE.Vector3( 0 , -0,-.5 );
+        //firstLight.setPos( l);
+
+
+
+        AddSnowflake( l )
+       
+
+        G.story.AddQuantizedEvent( -2 , function(UD,pos,delta){
+          console.log("BLAH");
+          console.log( pos );
+          console.log( delta );
+          console.log( UD );
+
+        });
+
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+      }
+
+      
+      function animate(){
+
+        requestAnimationFrame( animate );
+
+        time.value += clock.getDelta();
+
+        objectControls.update();
+        controls.update();
+        G.story.update( controls.position , controls.oldPosition );
+
+        
+        renderer.render( scene , camera );
+
+        infoBody.style.top = 20 * camera.position.y + "px";
+
+
+      }
+
+
+      function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+
+      function AddSnowflake( position ){
+
+        console.log( position );
+        var id = Math.floor( Math.random() * G.models.snowflakes.length);
+        var SF = new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
+          side: THREE.DoubleSide
+        }));
+
+        SF.scale.multiplyScalar( 1.1);
+        SF.rotation.y = 1.5* Math.PI;
+        SF.position.y = position.y;
+        SF.position.z = position.z;
+
+
+        G.story.AddQuantizedEvent( SF.position.y , function(){
+          console.log( id );
+        })
+
+        G.story.AddScrollEvent( function(delta){
+          SF.rotation.y += delta;
+        })
+
+        scene.add( SF );
+
+
+
+
+      }
+
+    </script>
+
+  </body>
+</html>
