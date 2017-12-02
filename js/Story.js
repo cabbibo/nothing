@@ -60,7 +60,7 @@ Story.prototype.update = function( position , oldPosition ){
   for( var i = 0; i < this.smoothedEvents.length; i++ ){
 
     var e = this.smoothedEvents[i];
-    if( position > e.start && position < e.end ){
+    if( position < e.start && position >= e.end ){
 
       var val = (position - e.start) / (e.end - e.start);
 

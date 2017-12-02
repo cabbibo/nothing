@@ -363,14 +363,14 @@ If you are reading this, its most likely because you code.
 
 
         AddSnowflake( l )
+
+
+        var l = new THREE.Vector3( 0 , -4,-.5 );
+        //AddWindow( l )
        
 
         G.story.AddQuantizedEvent( -2 , function(UD,pos,delta){
           console.log("BLAH");
-          console.log( pos );
-          console.log( delta );
-          console.log( UD );
-
         });
 
 
@@ -408,7 +408,7 @@ If you are reading this, its most likely because you code.
 			}
 
 
-      function AddSnowflake( position ){
+      /*function AddSnowflake( position ){
 
         console.log( position );
         var id = Math.floor( Math.random() * G.models.snowflakes.length);
@@ -432,10 +432,39 @@ If you are reading this, its most likely because you code.
 
         scene.add( SF );
 
+      }*/
 
 
+      function AddSnowflake( position ){
+
+        console.log( position );
+        
+        var id = Math.floor( Math.random() * G.models.snowflakes.length);
+        
+
+        var SF = new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
+          side: THREE.DoubleSide
+        }));
+
+        SF.scale.multiplyScalar( 1.1);
+        SF.rotation.y = 1.5* Math.PI;
+        SF.position.y = position.y;
+        SF.position.z = position.z;
+
+
+
+        G.story.AddSmoothedEvent( position.y , position.y-1, function(val , pos , delta){
+         
+          console.log( pos );
+          SF.position.y = pos;
+          SF.rotation.y += delta * 4;
+        });
+
+        scene.add( SF );
 
       }
+
+
 
     </script>
 
