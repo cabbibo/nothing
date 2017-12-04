@@ -10,12 +10,12 @@
 
 
         links = [];
-        /*for( var i = 0; i < linkInfo.length; i++ ){
+        for( var i = 0; i < linkInfo.length; i++ ){
 
          links[i] = new Link(font , linkInfo[i].title ,linkInfo[i].href  );
          links[i].add( new THREE.Vector3( 0,-i*.15 - 100.3, 0));
 
-        }*/
+        }
 
 
 
