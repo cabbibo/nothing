@@ -1,5 +1,7 @@
 function AudioController(){
 
+
+  AudioContext = AudioContext || webkitAudioContext;
   this.ctx = new AudioContext();
 
   this.mute     = this.ctx.createGain();
