@@ -88,11 +88,26 @@ If you are reading this, its most likely because you code.
 
 
     <script src="js/Story.js">                  </script>
+
+
+    <script src="js/AudioController.js"> </script>
+    <script src="js/AudioBuffer.js"> </script>
+    <script src="js/BufferedAudio.js"> </script>
+
+
+    <script src="js/MakeFunctions.js"></script>
+    <script src="js/Make.js"></script>
+
+    <script src="js/Load.js"></script>
+
+    <script src="js/Links.js"></script>
    
 
     <script>
 
       var T = THREE;
+
+      var SETPOS;
 
 
       var camera, renderer, scene , controls , clock;
@@ -108,6 +123,7 @@ If you are reading this, its most likely because you code.
 
 
       var loader = new THREE.OBJLoader( manager );
+      
       var neededToLoad = 0;
       var loaded = 0;
 
@@ -116,129 +132,39 @@ If you are reading this, its most likely because you code.
       G.textures = {}
       G.models = {}
 
-
-      function onLoad(){
-        loaded ++;
-        if( neededToLoad == loaded ){
-          init();
-          animate(); 
-        }
-      }
-
-      function loadOBJ( file , callback ){
-        neededToLoad += 1;
-        loader.load( file, function ( object ) {
-
-         // console.log( object );
-        object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {
-          callback(child);
-        }});
-        onLoad();
-
-        });
-      }
-     
-
-      G.story = new Story();
-
-
-
-      manager.onProgress = function ( item, loaded, total ) {
-          console.log( item, loaded, total );
-        };
-
-    
-
-      loadOBJ( 'models/heart/heartNoBG.obj', function(child){
-        console.log("SDSD");
-        console.log( child );
-        G.models.heart = child;
-      })
-
-
-      G.models.snowflakes = [];
-      loadOBJ( 'models/snowflakes/snow1.obj', function(child){
-        console.log("SDSD");
-        console.log( child );
-        G.models.snowflakes[0] = child;
-      })
-        
-
-
-     
-
-      neededToLoad += 1;
-      shaders.shaderSetLoaded = function(){
-        onLoad();
-      }
-
-
-
-
-
-
-      shaders.load( 'vs-text' , 'text' , 'vertex'   );
-      shaders.load( 'fs-text' , 'text' , 'fragment' );
-
-      shaders.load( 'vs-title' , 'title' , 'vertex'   );
-      shaders.load( 'fs-title' , 'title' , 'fragment' );
-
-
-      shaders.load( 'vs-gem' , 'gem' , 'vertex'   );
-      shaders.load( 'fs-gem' , 'gem' , 'fragment' );
-
-      shaders.load( 'vs-ray' , 'ray' , 'vertex'   );
-      shaders.load( 'fs-ray' , 'ray' , 'fragment' );
-
-      shaders.load( 'vs-darkness' , 'darkness' , 'vertex'   );
-      shaders.load( 'fs-darkness' , 'darkness' , 'fragment' );
-
-
-      shaders.load( 'vs-connections' , 'connections' , 'vertex'   );
-      shaders.load( 'fs-connections' , 'connections' , 'fragment' );
-
-      var uniforms = {
+       G.uniforms = {
         
         dT:       { type:"f"  , value : 0             },
         time:     { type:"f"  , value : 0             },
         progress: { type:"f"  , value : 0             },
-        iModelMat:{ type:"m4" , value: new THREE.Matrix4() }
+        iModelMat:{ type:"m4" , value: new THREE.Matrix4() },
+        audio: { type:"t" , value:null},
       }
 
-      var linkInfo = [];
+      G.audio  = new AudioController();
 
-      linkInfo.push({
-        title: "Models By Sam Rolfes",
-        href: "http://cabbi.bo"
-      });
+      G.uniforms.audio.value = G.audio.texture;
 
-      linkInfo.push({
-        title: "Audio by Yagmur",
-        href: "http://cabbi.bo"
-      });
+      G.audio.currentBuffer = 0;
+      G.audio.mute.gain.value = 0;
 
-      linkInfo.push({
-        title: "Story / Code by Cabbibo",
-        href: "http://cabbi.bo/"
-      });
+      G.audio.buffers = {};
+      G.audio.playbackBuffers = [];
 
-      
-      linkInfo.push({
-        title: "Share on Twitter",
-        href: "http://twitter.com/share?text=Love%20is%20all.%20It%20is%20more%20than%20hate,%20more%20than%20fear,%20and%20though%20it%20is%20quiet%20it%20has%20more%20power%20than%20the%20dark%20ever%20will%3A&url=http://cabbi.bo/light/"
-      });
+      G.story = new Story();
 
 
+      LoadItAll();
 
+     
 
 
       function init(){
 
-
+      // Scroll Directions
        infoBody = document.createElement("div");
 
        infoBody.id ="infoBody";
-        //this.infoBody.innerHTML = "scroll  <br/> &#x2193; &#x2193; &#x2193;"
        infoBody.innerHTML = "scroll  <br/> &#x2193; &#x2193; &#x2193;"
 
        document.body.appendChild( infoBody );
@@ -250,14 +176,14 @@ If you are reading this, its most likely because you code.
         camera = new THREE.PerspectiveCamera( 65 , w/h , .001 , 10 );
         camera.position.z = 1;
 
+        //Setting up params for scroll controls in Make.js
         controls = new ScrollControls( camera );
         
         clock = new THREE.Clock();
         
         scene = new THREE.Scene();
 
-
-
+      
 
         var dpr = window.devicePixelRatio || 1;
         renderer = new THREE.WebGLRenderer();
@@ -265,116 +191,23 @@ If you are reading this, its most likely because you code.
         renderer.setSize( window.innerWidth, window.innerHeight );
 
         document.body.appendChild( renderer.domElement );
-
-        /*
-
-           Object Control stuff!!!!
-
-        */ 
-
-        objectControls = new ObjectControls( camera );
-
-
-        
-
-        var vs = shaders.vertexShaders.text;
-        var fs = shaders.fragmentShaders.text;
+        window.addEventListener( 'resize', onWindowResize, false );
 
 
 
-
-
-       /* title = new TextParticles( "I Love You" , font , vs , fs , {
-         letterWidth: .05,
-         lineLength: 29,
-         uniforms:{
-          time: time,
-         }  
-        });
-        
-
-        title.position.x = -title.totalWidth / 2;
-       // title.position.z = -.2;
-        title.position.y = .3;*/
-
-
-
-
-        // Passage comes from seperate file
-        textParticles = new TextParticles( noThing , font , vs , fs , {
-         letterWidth: .03,
-         lineLength: 50,
-         uniforms:{
-          time: time,
-         }  
-        });
-        
-        scene.add( textParticles );
-       // scene.add( title );
-
-        //textParticles.material.uniforms.time.value = 1.;
-
-        textParticles.position.x = - textParticles.totalWidth / 2;
-
-        controls.minPos     = -30.7;
-        controls.maxPos     =  0;
-        controls.multiplier =  .000003 * textParticles.totalHeight;
-        controls.dampening  = .95;
-
-
-        links = [];
-        for( var i = 0; i < linkInfo.length; i++ ){
-
-         links[i] = new Link(font , linkInfo[i].title ,linkInfo[i].href  );
-         links[i].add( new THREE.Vector3( 0,-i*.15 - 30.3, 0));
-
+        // Makes a buffer for playing sounds! 
+        for( var i = 0; i < 20; i++ ){
+          var g = G.audio.buffers.pure.buffer;
+          G.audio.playbackBuffers[i] = new BufferedAudio( g , G.audio.ctx , G.audio.gain , false );
         }
 
 
+        objectControls = new ObjectControls( camera );
+
+        Make();
 
 
-        G.models.heart.material = new THREE.MeshNormalMaterial({
-                side: THREE.DoubleSide
-              });
-
-        G.models.heart.scale.multiplyScalar( .1);
-        G.models.heart.rotation.y = 1.5* Math.PI;
-        G.models.heart.position.y = -3.5;
-        G.models.heart.position.z = -1;
-        //G.
-
-        //child.material.map = texture;
-
-        scene.add( G.models.heart );
-
-
-
-
-
-
-
-        firstLight = new Light();
-
-        //firstLight.add();
-
-        var l = new THREE.Vector3( 0 , -0,-.5 );
-        //firstLight.setPos( l);
-
-
-
-        AddSnowflake( l )
-
-
-        var l = new THREE.Vector3( 0 , -4,-.5 );
-        //AddWindow( l )
-       
-
-        G.story.AddQuantizedEvent( -2 , function(UD,pos,delta){
-          console.log("BLAH");
-        });
-
-
-        window.addEventListener( 'resize', onWindowResize, false );
+        
 
       }
 
@@ -386,7 +219,20 @@ If you are reading this, its most likely because you code.
         time.value += clock.getDelta();
 
         objectControls.update();
-        controls.update();
+
+        if( SETPOS ){
+
+          camera.position.y = -(camera.position.y - SETPOS) / 8 + camera.position.y;
+
+          if( Math.abs(camera.position.y - SETPOS) < .01 ){
+
+            SETPOS = undefined;
+          }
+
+          
+        }else{
+          controls.update();
+        }
         G.story.update( controls.position , controls.oldPosition );
 
         
@@ -407,62 +253,18 @@ If you are reading this, its most likely because you code.
 
 			}
 
+      G.audio.play = function( buffer , rate ){
 
-      /*function AddSnowflake( position ){
-
-        console.log( position );
-        var id = Math.floor( Math.random() * G.models.snowflakes.length);
-        var SF = new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
-          side: THREE.DoubleSide
-        }));
-
-        SF.scale.multiplyScalar( 1.1);
-        SF.rotation.y = 1.5* Math.PI;
-        SF.position.y = position.y;
-        SF.position.z = position.z;
-
-
-        G.story.AddQuantizedEvent( SF.position.y , function(){
-          console.log( id );
-        })
-
-        G.story.AddScrollEvent( function(delta){
-          SF.rotation.y += delta;
-        })
-
-        scene.add( SF );
-
-      }*/
-
-
-      function AddSnowflake( position ){
-
-        console.log( position );
-        
-        var id = Math.floor( Math.random() * G.models.snowflakes.length);
-        
-
-        var SF = new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
-          side: THREE.DoubleSide
-        }));
-
-        SF.scale.multiplyScalar( 1.1);
-        SF.rotation.y = 1.5* Math.PI;
-        SF.position.y = position.y;
-        SF.position.z = position.z;
-
-
-
-        G.story.AddSmoothedEvent( position.y , position.y-1, function(val , pos , delta){
-         
-          console.log( pos );
-          SF.position.y = pos;
-          SF.rotation.y += delta * 4;
-        });
-
-        scene.add( SF );
+        G.audio.currentBuffer += 1;
+        G.audio.currentBuffer %= G.audio.playbackBuffers.length;
+        G.audio.playbackBuffers[G.audio.currentBuffer].play(buffer,rate);
 
       }
+
+      function SP ( pos ){
+        SETPOS = pos;
+      }
+
 
 
 
