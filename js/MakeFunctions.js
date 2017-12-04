@@ -47,7 +47,7 @@
 
         G.story.AddSmoothedEvent( position.y-1.5 , position.y-3.5, function(val , pos , delta){
           SF.position.y = pos;
-          SF.position.z = SF.ogZ + 2 * val;
+          SF.position.z = SF.ogZ + 4 * val;
         });
 
 

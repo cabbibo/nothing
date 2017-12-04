@@ -16,11 +16,17 @@ function LoadItAll(){
   })
 
 
+  loadOBJ( 'models/flower1.obj', function(child){
+    G.models.flower1 = child;
+  })
+
   G.models.snowflakes = [];
   loadOBJ( 'models/snowflakes/snow1.obj', function(child){
     G.models.snowflakes[0] = child;
   })
     
+
+
 
 
  
@@ -83,11 +89,13 @@ function loadOBJ( file , callback ){
   neededToLoad += 1;
 
   loader.load( file, function ( object ) {
-
+console.log("NOPEaa");
     object.traverse( function ( child ) {
 
       if ( child instanceof THREE.Mesh ) {
         callback(child);
+      }else{
+        console.log("NOPE");
       }
 
     });
