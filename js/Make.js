@@ -5,7 +5,7 @@
 
         controls.minPos     = -1000.7;
         controls.maxPos     =  0;
-        controls.multiplier =  .000001 * textParticles.totalHeight;
+        controls.multiplier =  .0000001 * textParticles.totalHeight;
         controls.dampening  = .95;
 
 
@@ -13,7 +13,7 @@
         for( var i = 0; i < linkInfo.length; i++ ){
 
          links[i] = new Link(font , linkInfo[i].title ,linkInfo[i].href  );
-         links[i].add( new THREE.Vector3( 0,-i*.15 - 400.3, 0));
+         links[i].add( new THREE.Vector3( 0,-i*.15 - 150.3, 0));
 
         }
 
@@ -54,7 +54,7 @@
 
 
 
-        //HEART
+        //FLOWER
         G.models.flower1.material = new THREE.MeshNormalMaterial({
                 side: THREE.DoubleSide
               });
@@ -65,16 +65,36 @@
         G.models.flower1.position.z = -30;
 
         G.story.AddQuantizedEvent( -54 , function(Up,pos,delta){
-
           if( Up == false ){
             scene.add(G.models.flower1)
+          }else{
+            scene.remove(G.models.flower1)
+          }
+        });
+
+
+        //FLOWER
+        G.models.tentacle1.material = new THREE.MeshNormalMaterial({
+                side: THREE.DoubleSide
+              });
+
+        G.models.tentacle1.scale.multiplyScalar( .1);
+        G.models.tentacle1.rotation.y = 1.5* Math.PI;
+        G.models.tentacle1.position.y = -90;
+        G.models.tentacle1.position.z = -30;
+
+        G.story.AddQuantizedEvent( -54 , function(Up,pos,delta){
+          if( Up == false ){
+            scene.add(G.models.tentacle1)
+          }else{
+            scene.remove(G.models.tentacle1)
           }
         });
 
 
 
 
-        //HEART
+        //VOID
         var sMat = new THREE.MeshBasicMaterial({color:"black"});
         var sGeo = new THREE.CylinderGeometry( 1 , 1, 1, 30 );
 
@@ -89,7 +109,10 @@
 
         //WINDOW
         var l = new THREE.Vector3( 0 , -10.5,-2.5 );
-        AddWindow( l )
+        AddWindow( l );
+        AddDude( l );
+
+
 
 
         // SNOW top!
