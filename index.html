@@ -24,12 +24,54 @@ If you are reading this, its most likely because you code.
       
 
       #infoBody{
-      z-index: 999;
-      position: absolute;
-      right: 20px;
-      //width: 20px;
-      background: none;
-    }
+        z-index: 999;
+        position: absolute;
+        right: 20px;
+        //width: 20px;
+        background: none;
+      }
+
+      #scrollInfo{
+        z-index: 999;
+        position: absolute;
+        right: 50%;
+        bottom:20px;
+        //width: 20px;
+        background: none;
+      }
+
+
+      #pageUp{
+        z-index: 999;
+        position: absolute;
+        left: 20px;
+        bottom:20px;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        border:1px solid white;
+        background: rgba( 255, 255,255,.3);
+      }
+
+      #pageDown{
+        z-index: 999;
+        position: absolute;
+        right: 20px;
+        bottom:20px;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        border:1px solid white;
+        background: rgba( 255, 255,255,.3);
+      }
+
+      #pageDown:hover{
+        background: rgba( 255, 255,255,.7);
+      }
+
+      #pageUp:hover{
+        background: rgba( 255, 255,255,.7);
+      }
       html{ overflow: hidden }
     </style>
 
@@ -59,6 +101,11 @@ If you are reading this, its most likely because you code.
   </head>
 
   <body>
+    <div id="scrollInfo">hey</div>
+
+    <div id="pageUp">hey</div>
+
+    <div id="pageDown">&#x2193;</div>
 
     <script src="lib/three.min.js">             </script>
     <script src="lib/jquery.min.js">            </script>
@@ -105,6 +152,8 @@ If you are reading this, its most likely because you code.
     <script src="js/Load.js"></script>
 
     <script src="js/Links.js"></script>
+
+    <script src="js/Paginator.js"></script>
    
 
     <script>
@@ -121,12 +170,13 @@ If you are reading this, its most likely because you code.
       var font = PTMono( 'fonts/PTMono.png' );
 
       var time = { type:"f" , value: 1 }
-      var shaders = new ShaderLoader( 'examples/fade/shaders' );
+      var shaders = new ShaderLoader( 'shaders' );
 
       var manager = new THREE.LoadingManager();
 
 
       var loader = new THREE.OBJLoader( manager );
+      var tLoader = new THREE.TextureLoader( manager );
       
       var neededToLoad = 0;
       var loaded = 0;
@@ -143,6 +193,7 @@ If you are reading this, its most likely because you code.
         progress: { type:"f"  , value : 0             },
         iModelMat:{ type:"m4" , value: new THREE.Matrix4() },
         audio: { type:"t" , value:null},
+        t_matcap: { type:"t", value:null}
       }
 
       G.audio  = new AudioController();
@@ -150,15 +201,22 @@ If you are reading this, its most likely because you code.
       G.uniforms.audio.value = G.audio.texture;
 
       G.audio.currentBuffer = 0;
-      G.audio.mute.gain.value = 0;
+      //G.audio.mute.gain.value = 0;
 
       G.audio.buffers = {};
       G.audio.playbackBuffers = [];
+      G.audio.gainNodes = [];
 
       G.story = new Story();
 
+      G.scrollInfo = document.getElementById("scrollInfo");
+
 
       LoadItAll();
+
+      G.paginator = new Paginator();
+
+      document.body.addEventListener("mousewheel", function(e){ e.preventDefault(); });
 
      
 
@@ -202,7 +260,12 @@ If you are reading this, its most likely because you code.
         // Makes a buffer for playing sounds! 
         for( var i = 0; i < 20; i++ ){
           var g = G.audio.buffers.pure.buffer;
-          G.audio.playbackBuffers[i] = new BufferedAudio( g , G.audio.ctx , G.audio.gain , false );
+
+          G.audio.gainNodes[i] = G.audio.ctx.createGain();
+
+          G.audio.gainNodes[i].connect( G.audio.gain );
+
+          G.audio.playbackBuffers[i] = new BufferedAudio( g , G.audio.ctx , G.audio.gainNodes[i] , false );
         }
 
 
@@ -222,21 +285,31 @@ If you are reading this, its most likely because you code.
 
         time.value += clock.getDelta();
 
+        G.uniforms.time.value = time.value;
+
+
         objectControls.update();
+
+        G.paginator.update();
+
+        scrollInfo.innerHTML = Math.round( camera.position.y * 100) / 100;
 
         if( SETPOS ){
 
-          camera.position.y = -(camera.position.y - SETPOS) / 8 + camera.position.y;
+          controls.update();
+          camera.position.y = -(camera.position.y - SETPOS) / 100 + camera.position.y;
 
           if( Math.abs(camera.position.y - SETPOS) < .01 ){
 
             SETPOS = undefined;
           }
-
           
         }else{
           controls.update();
         }
+
+
+
         G.story.update( controls.position , controls.oldPosition );
 
         
@@ -257,11 +330,15 @@ If you are reading this, its most likely because you code.
 
 			}
 
-      G.audio.play = function( buffer , rate ){
+      G.audio.play = function( buffer , rate , volume ){
+
+
 
         G.audio.currentBuffer += 1;
         G.audio.currentBuffer %= G.audio.playbackBuffers.length;
-        G.audio.playbackBuffers[G.audio.currentBuffer].play(buffer,rate);
+
+
+        G.audio.playbackBuffers[G.audio.currentBuffer].play(buffer,rate,volume);
 
       }
 

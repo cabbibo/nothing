@@ -153,3 +153,40 @@
         textParticles.position.x = - textParticles.totalWidth / 2;
 
       }
+
+
+      function FadeLoop(buffer, peakVolume , fadeInStart, fadeInEnd , fadeOutStart, fadeOutEnd ){
+
+        var gain = G.audio.ctx.createGain();
+
+        gain.connect( G.audio.gain );
+        
+
+        var playback = new BufferedAudio( buffer , G.audio.ctx , gain , true );
+        playback.play();
+        gain.gain.value = 0;
+
+        G.story.AddSmoothedEvent( fadeInStart,fadeInEnd,function(value){
+            gain.gain.value = value * peakVolume;
+        });
+
+        G.story.AddSmoothedEvent( fadeInEnd,fadeOutStart,function(value){
+            gain.gain.value = peakVolume;
+        });
+
+        G.story.AddSmoothedEvent(  fadeOutStart,fadeOutEnd,function(value){
+            gain.gain.value = (1-value) * peakVolume;
+        });
+
+        G.story.AddScrollEvent(function(){
+
+          var c  = camera.position.y;
+
+          if( c >= fadeInStart || c <= fadeOutEnd ){
+            gain.gain.value = 0;
+          }
+
+        })
+
+
+      }

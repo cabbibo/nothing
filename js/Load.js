@@ -40,8 +40,23 @@ function LoadItAll(){
   loadAudio( "slippery" ,"sounds/slipperySound.mp3" );
   loadAudio( "tang" ,"sounds/tangSound.mp3" );
 
+
+  loadAudio( "enviornment1" ,"sounds/enviornment1.mp3" );
+  loadAudio( "enviornment2" ,"sounds/enviornment2.mp3" );
+  loadAudio( "enviornment3" ,"sounds/enviornment3.mp3" );
+  loadAudio( "enviornment4" ,"sounds/enviornment4.mp3" );
+
   loadAudio( "hit1" ,"sounds/logoHit1.wav" );
   loadAudio( "hit2" ,"sounds/logoHit2.wav" );
+
+  loadAudio( "glass1" ,"sounds/glass1.wav" );
+  loadAudio( "glass2" ,"sounds/glass2.wav" );
+  loadAudio( "glass3" ,"sounds/glass3.wav" );
+
+  loadAudio( "heartbeat", "sounds/heartbeat.wav" );
+  loadAudio( "drone1", "sounds/drone1.wav" );
+  loadAudio( "worle2", "sounds/worle2.wav" );
+  loadAudio( "tone", "sounds/tone.wav" );
 
 
   loadAudio( "logo" ,"sounds/logoSound.wav" );
@@ -62,19 +77,15 @@ function LoadItAll(){
   shaders.load( 'vs-title' , 'title' , 'vertex'   );
   shaders.load( 'fs-title' , 'title' , 'fragment' );
 
+  shaders.load( 'vs-tentacles' , 'tentacles' , 'vertex' );
+  shaders.load( 'fs-tentacles' , 'tentacles' , 'fragment');
 
-  shaders.load( 'vs-gem' , 'gem' , 'vertex'   );
-  shaders.load( 'fs-gem' , 'gem' , 'fragment' );
+  loadTexture('img/rough-aluminium.jpg',function(texture){
+    G.uniforms.t_matcap.value = texture
+  });
 
-  shaders.load( 'vs-ray' , 'ray' , 'vertex'   );
-  shaders.load( 'fs-ray' , 'ray' , 'fragment' );
-
-  shaders.load( 'vs-darkness' , 'darkness' , 'vertex'   );
-  shaders.load( 'fs-darkness' , 'darkness' , 'fragment' );
-
-
-  shaders.load( 'vs-connections' , 'connections' , 'vertex'   );
-  shaders.load( 'fs-connections' , 'connections' , 'fragment' );
+  //shaders.load( 'vs-light' , 'light' , 'vertex');
+  //shaders.load( 'fs-light' , 'light' , 'fragment');
 
 
 }
@@ -109,6 +120,19 @@ function loadOBJ( file , callback ){
   });
 
 }
+
+function loadTexture( file , callback ){
+
+  neededToLoad += 1;
+
+
+  tLoader.load(file,function(texture){
+    onLoad();
+    callback(texture);
+  });
+
+}
+
 
 
 function onLoad(){
