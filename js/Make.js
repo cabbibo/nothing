@@ -17,19 +17,9 @@
 
         }
 
-
-
-
-     
-
-
-
-
         // SNOW top!
         var pf = ParticleField( 1000 , -2 , -10 , 3 , 100 );
         scene.add( pf );
-
-
 
         // FIRST SNOWFLAKE
         var l = new THREE.Vector3( 0 , -0,-1 );
@@ -43,10 +33,6 @@
         G.story.AddQuantizedEvent( -1 , function(UD,pos,delta){
           G.audio.play( G.audio.buffers.logo.buffer , 2 , .1);
         });
-
-
-
-
 
         //HEART
         G.models.heart.material  = new THREE.ShaderMaterial({

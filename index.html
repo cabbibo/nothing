@@ -20,7 +20,8 @@ If you are reading this, its most likely because you code.
       font-family: "Calibre-Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Helmut, Arial, "Lucida Grande", sans-serif;
       font-weight: 300;
       font-style: normal;
-      color: #ffffff; }
+      color: #ffffff;
+      background: #ff0000; }
       
 
       #infoBody{
@@ -72,7 +73,87 @@ If you are reading this, its most likely because you code.
       #pageUp:hover{
         background: rgba( 255, 255,255,.7);
       }
-      html{ overflow: hidden }
+ html{ color:#fff; background:#000; font-family:"GeoSans" ; overflow: hidden; }
+    body{
+      font-size:30px;
+    }
+    a{
+      color: #fff;
+    }
+    a:hover{
+      color: #fff;
+      font-weight:bold;
+    }
+    a:visited{
+      color:#fff;
+    }
+    #renderer{
+      position:fixed;
+      top:0px;
+      left:0px;
+    }
+    #title{
+      color:#fff;
+      font-size: 100px;
+      right:30px;
+      bottom:30px;
+      position:absolute;
+      z-index: 99;
+    }
+    .navNode{
+      width: 30px;
+      height: 30px;
+      //position: absolute;
+      border: 1px solid #fff;
+      float: left;
+      margin: 10px;
+      background-color:rgba(0,0,0,.2);
+    }
+   
+    #navbar{
+      position:absolute;
+      z-index: 99;
+      width:100%;
+      //background: #011;
+    }
+    #duringLoad{
+      position:absolute;
+      z-index: 99;
+    }
+    #loadbar{
+      height:60px;
+      position:absolute;
+      background:#fff;
+    }
+    #startButton{
+      border:1px solid white;
+      visibility: hidden;
+      width:20%;
+      left:40%;
+      position:absolute;
+      text-align: center;
+      padding:10px;
+      top:5px;
+      background: #000;
+      //position: fixed;
+    }
+    #startButton:hover{
+      background:#fff;
+      color:#000;
+      border:1px solid black;
+    }
+    #loaderHolder{
+      width:100%;
+      height:60px;
+      left:-3px;
+      position:absolute;
+      border:3px solid white;
+    }
+    #description{
+      padding:10%;
+    }
+
+
     </style>
 
 
@@ -100,8 +181,28 @@ If you are reading this, its most likely because you code.
 
   </head>
 
-  <body>
-    <div id="scrollInfo">hey</div>
+  <body style="margin:0px">
+<div id="duringLoad">
+  <div id="loaderHolder"><div id="loadbar"></div></div>
+  <div id="description">
+    <p>
+  Hey!<br/>
+    So this is a talk I gave at <a target="_blank" href="http://nextart.tech/"> Next Art Night </a> which is a parsed down version of one that I originally presented at Pixar.
+    <br/><br/>
+    I've been trying to think of how exactly to be taking these interactive speeches, and putting them up for others to experience. 
+    I don't know how well it works, but I would love to hear what you think of it. Hit me up on <a target="_blank" href="http://twitter.com/cabbibo">twitter : @cabbibo </a> or <a target="_blank" href="mailto:hello@cabbi.bo">email me: hello@cabbi.bo</a>
+    <br/>
+    Runtime: 15 min
+    <br/><br/>
+    - Isaac
+    <br/>
+
+    </p>
+
+  </div>
+  <div id="startButton" onclick="beginItAll()">START</div>
+</div>
+<div id="title"></div>
 
     <!--<div id="pageUp">hey</div>
 
@@ -184,6 +285,8 @@ If you are reading this, its most likely because you code.
       var neededToLoad = 0;
       var loaded = 0;
 
+      var loadDiv = document.getElementById( "loadbar");
+
       var G = {}
       G.sounds = {}
       G.textures = {}
@@ -216,7 +319,8 @@ If you are reading this, its most likely because you code.
 
       G.story = new Story();
 
-      G.scrollInfo = document.getElementById("scrollInfo");
+      G.scrollInfo = document.getElementById("description");
+      scrollInfo = document.getElementById("description");
 
 
       LoadItAll();
@@ -302,6 +406,7 @@ If you are reading this, its most likely because you code.
 
 
 
+        addStartButton();
         
 
       }
@@ -365,6 +470,7 @@ If you are reading this, its most likely because you code.
       G.audio.play = function( buffer , rate , volume ){
 
 
+        unlock();
 
         G.audio.currentBuffer += 1;
         G.audio.currentBuffer %= G.audio.playbackBuffers.length;
@@ -385,6 +491,53 @@ window.mobileAndTabletcheck = function() {
   return check;
 };
 
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+var isUnlocked = false;
+function unlock() {
+      
+  if(iOS || this.unlocked)
+    return;
+
+  // create empty buffer and play it
+  var buffer = G.audio.ctx.createBuffer(1, 1, 22050);
+  var source = G.audio.ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(G.audio.ctx.destination);
+  source.start(0);
+
+  // by checking the play state after some time, we know if we're really unlocked
+  setTimeout(function() {
+    if((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
+      isUnlocked = true;
+    }
+  }, 100);
+
+
+
+}
+
+
+
+  function beginItAll(){
+    //fullscreenIt();
+
+    unlock();
+    removeLoadingStuff();
+    animate();
+    document.getElementById("startButton").style.visibility = "hidden";
+    //turnToPage( 5 );
+  }
+
+  function removeLoadingStuff(){
+    document.getElementById("duringLoad").style.visibility = "hidden"
+    
+  }
+
+
+
+function addStartButton(){
+  document.getElementById("startButton").style.visibility = "visible";
+}
 
 
     </script>

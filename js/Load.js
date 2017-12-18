@@ -157,9 +157,12 @@ function loadTexture( file , callback ){
 
 function onLoad(){
   loaded ++;
+
+  loadDiv.style.width = (( loaded / neededToLoad ) * window.innerWidth) + "px" 
+
   if( neededToLoad == loaded ){
     init();
-    animate(); 
+    //animate(); 
   }
 }
 

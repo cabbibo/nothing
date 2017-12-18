@@ -90,7 +90,7 @@
           transparent: true
           //side: THREE.DoubleSide
         });
-        
+
         var eye1 = new THREE.Mesh(geo ,mat);
         var eye2 = new THREE.Mesh(geo ,mat);
 
@@ -213,6 +213,7 @@
         
 
         var playback = new BufferedAudio( buffer , G.audio.ctx , gain , true );
+        unlock();
         playback.play();
         gain.gain.value = 0;
 
