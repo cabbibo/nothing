@@ -3,7 +3,7 @@
 
         MakeText();
 
-        controls.minPos     = -1000.7;
+        controls.minPos     = -151.3;
         controls.maxPos     =  0;
         controls.multiplier =  .0000001 * textParticles.totalHeight;
         controls.dampening  = .95;
@@ -32,7 +32,7 @@
 
 
         // FIRST SNOWFLAKE
-        var l = new THREE.Vector3( 0 , -0,-.5 );
+        var l = new THREE.Vector3( 0 , -0,-1 );
         AddSnowflake( l )
 
 
@@ -49,9 +49,11 @@
 
 
         //HEART
-        G.models.heart.material = new THREE.MeshNormalMaterial({
-                side: THREE.DoubleSide
-              });
+        G.models.heart.material  = new THREE.ShaderMaterial({
+          vertexShader: shaders.vs.heart,
+          fragmentShader: shaders.fs.heart,
+          uniforms: G.uniforms,
+        });
 
         G.models.heart.scale.multiplyScalar( .1);
         G.models.heart.rotation.y = 1.5* Math.PI;
@@ -59,11 +61,16 @@
         G.models.heart.position.z = -1;
 
         scene.add( G.models.heart );
+ 
+        G.story.AddSmoothedEvent( -3 , -3.5, function(val , pos , delta){
+          G.uniforms.heartDeath.value = val ;
+        });
+
 
         // Heartbeats
         for( var i = 0; i < 10; i++ ){
           G.story.AddQuantizedEvent( -2.5 - i * .5, function(UD,pos,delta){
-            G.audio.play( G.audio.buffers.heartbeat.buffer , 1 , (1-(i/10)) * 3);
+            G.audio.play( G.audio.buffers.heartbeat.buffer , 1 , 5*(1-(i/10)) * 3);
           });
         }
 
@@ -90,6 +97,7 @@
 
         //WINDOW
         var l = new THREE.Vector3( 0 , -10.5,-2.5 );
+        //var l = new THREE.Vector3( 0 , 0 ,-2.5 );
         AddWindow( l );
         AddDude( l );
 
@@ -125,17 +133,16 @@
         FadeLoop(G.audio.buffers.enviornment2.buffer, .7 , -30 , -43 , -48, -52 );
         FadeLoop(G.audio.buffers.enviornment4.buffer, .7 , -40 , -48 , -53, -56 );
 
-        FadeLoop(G.audio.buffers.enviornment3.buffer, .6 , -56 , -60, -130, -137 );
+        FadeLoop(G.audio.buffers.enviornment3.buffer, .3 , -56 , -60, -60, -137 );
 
 
         //DEATH BARS
         var dbA = [
-          [-35,.5],
+          [-35,.7],
           [-40,.5],
           [-44,.4],
           [-47,.2],
           [-49,.1],
-    
           [-54,5],
         ]
         var dr = DeathBars( dbA );
@@ -150,7 +157,7 @@
         */
 
         //FLOWER
-        G.models.flower1.material = new THREE.MeshNormalMaterial({
+        /*G.models.flower1.material = new THREE.MeshNormalMaterial({
                 side: THREE.DoubleSide
               });
 
@@ -186,14 +193,80 @@
           }else{
             scene.remove(G.models.tentacle1)
           }
+        });*/
+
+        for( var i = 0; i < 6; i ++ ){
+          var snow = initSnowflake();
+          snow.scale.multiplyScalar( .3  - .28 * (Math.pow( i/6 , .7)));
+          snow.position.z = -30 + i;
+          snow.position.y = -90;
+          snow.rotation.y = 0;
+          snow.rot = Math.random() - .5;
+
+          snow.startingScale = snow.scale.x;
+
+          G.story.AddQuantizedEvent( -54 , function(Up,pos,delta){
+            if( Up == false ){
+              scene.add(this)
+            }else{
+              scene.remove(this)
+            }
+          }.bind(snow));
+
+          G.story.AddScrollEvent(function(delta){
+
+            this.rotation.z += this.rot * delta * .1; 
+            
+          }.bind(snow));
+
+          G.story.AddSmoothedEvent( -125.5 , -135.5, function(val , pos , delta){
+            this.scale.x = this.startingScale * (1-val);
+            this.scale.y = this.startingScale * (1-val);
+            this.scale.z = this.startingScale * (1-val);
+          }.bind(snow));
+        }
+
+
+
+        var c =    2 * .5;
+        var g =   (784 / 523) * .5;
+        var a =   (880 / 523) * .5;
+        var d =   (698 / 523) * .5;
+
+
+        G.story.AddQuantizedEvent(-106,function(){ 
+          controls.speed = 0;
+          G.audio.play( G.audio.buffers.crackle.buffer , c , 1);
+        })
+
+         G.story.AddQuantizedEvent(-107,function(){ 
+          controls.speed = 0;
+          G.audio.play( G.audio.buffers.crackle.buffer , g , 1);
+        })
+
+          G.story.AddQuantizedEvent(-109,function(){ 
+          controls.speed = 0;
+          G.audio.play( G.audio.buffers.crackle.buffer , a , 1);
+        })
+
+           G.story.AddQuantizedEvent(-110,function(){ 
+          controls.speed = 0;
+          G.audio.play( G.audio.buffers.crackle.buffer , d , 1);
+        })
+
+
+        var geo = new THREE.PlaneGeometry(.3,.3);
+        var mat = new THREE.MeshBasicMaterial({
+          map:G.logoTexture
         });
 
+        
+        var logo = new THREE.Mesh(geo ,mat);
+        logo.position.z = -.3;
+        logo.position.y = -151.5;
+        scene.add(logo);
 
-        G.story.AddQuantizedEvent(-106,function(){ controls.speed = 0; })
-        G.story.AddQuantizedEvent(-107,function(){ controls.speed = 0; })
-        G.story.AddQuantizedEvent(-109,function(){ controls.speed = 0; })
-        G.story.AddQuantizedEvent(-110,function(){ controls.speed = 0; })
-       
+
 
      
 

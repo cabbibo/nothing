@@ -31,10 +31,6 @@ function LoadItAll(){
     
 
 
-
-
- 
-
   loadAudio( "pure" ,"sounds/pureSound.mp3" );
   loadAudio( "crackle" ,"sounds/crackleSound.mp3" );
   loadAudio( "slippery" ,"sounds/slipperySound.mp3" );
@@ -61,6 +57,7 @@ function LoadItAll(){
 
   loadAudio( "logo" ,"sounds/logoSound.wav" );
   loadAudio( "logoHit" ,"sounds/hitSound.wav" );
+  loadAudio( "whoosh" ,"sounds/whoosh.wav" );
 
 
 
@@ -80,8 +77,31 @@ function LoadItAll(){
   shaders.load( 'vs-tentacles' , 'tentacles' , 'vertex' );
   shaders.load( 'fs-tentacles' , 'tentacles' , 'fragment');
 
+
+  shaders.load( 'vs-eyes' , 'eyes' , 'vertex' );
+  shaders.load( 'fs-eyes' , 'eyes' , 'fragment');
+
+  shaders.load( 'vs-snow' , 'snow' , 'vertex' );
+  shaders.load( 'fs-snow' , 'snow' , 'fragment');
+
+
+  shaders.load( 'vs-heart' , 'heart' , 'vertex' );
+  shaders.load( 'fs-heart' , 'heart' , 'fragment');
+
+
+  shaders.load( 'vs-window' , 'window' , 'vertex' );
+  shaders.load( 'fs-window' , 'window' , 'fragment');
+
+  shaders.load( 'vs-gold' , 'gold' , 'vertex' );
+  shaders.load( 'fs-gold' , 'gold' , 'fragment');
+
   loadTexture('img/rough-aluminium.jpg',function(texture){
     G.uniforms.t_matcap.value = texture
+  });
+
+
+  loadTexture('img/icons/cabbibo.png',function(texture){
+    G.logoTexture = texture
   });
 
   //shaders.load( 'vs-light' , 'light' , 'vertex');

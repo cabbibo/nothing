@@ -113,6 +113,7 @@ If you are reading this, its most likely because you code.
 
     <script src="lib/ScrollControls.js">        </script>
     <script src="lib/ObjectControls.js">        </script>
+    <script src="lib/underscore.js">        </script>
 
 
     <script src="lib/OBJLoader.js">             </script>
@@ -154,6 +155,8 @@ If you are reading this, its most likely because you code.
     <script src="js/Links.js"></script>
 
     <script src="js/Paginator.js"></script>
+    <script src="js/SnowflakeGeometry.js"></script>
+    <script src="js/initSnowflake.js"></script>
    
 
     <script>
@@ -193,7 +196,11 @@ If you are reading this, its most likely because you code.
         progress: { type:"f"  , value : 0             },
         iModelMat:{ type:"m4" , value: new THREE.Matrix4() },
         audio: { type:"t" , value:null},
-        t_matcap: { type:"t", value:null}
+        t_matcap: { type:"t", value:null},
+        eyesClosed:{type:"f",value:0},
+        filled:{type:"f" , value:1},
+        heartDeath:{type:"f",value:0},
+        golden:{type:"f",value:0},
       }
 
       G.audio  = new AudioController();
@@ -235,7 +242,7 @@ If you are reading this, its most likely because you code.
         var w = window.innerWidth;
         var h = window.innerHeight;
 
-        camera = new THREE.PerspectiveCamera( 65 , w/h , .01 , 100 );
+        camera = new THREE.PerspectiveCamera( 65 , w/h , .1 , 100 );
         camera.position.z = 1;
 
         //Setting up params for scroll controls in Make.js
@@ -245,7 +252,6 @@ If you are reading this, its most likely because you code.
         
         scene = new THREE.Scene();
 
-      
 
         var dpr = window.devicePixelRatio || 1;
         renderer = new THREE.WebGLRenderer();
@@ -309,6 +315,7 @@ If you are reading this, its most likely because you code.
         }
 
 
+        G.eye.update();
 
         G.story.update( controls.position , controls.oldPosition );
 

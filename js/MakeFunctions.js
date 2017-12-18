@@ -5,18 +5,25 @@
         var id = Math.floor( Math.random() * G.models.snowflakes.length);
         
 
-        var SF = new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
-          side: THREE.DoubleSide
-        }));
+        var SF = initSnowflake();
 
-        SF.scale.multiplyScalar( 1.1);
-        SF.rotation.y = 1.5* Math.PI;
+        console.log( SF );
+
+        /* new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
+          side: THREE.DoubleSide
+        }));*/
+
+
+
+        SF.scale.multiplyScalar( .005);
+        SF.rotation.y = 1.5 * Math.PI - 1;
         SF.position.y = position.y;
+        SF.rotation.z = .4;
         SF.position.z = position.z;
 
         G.story.AddSmoothedEvent( position.y , position.y-1, function(val , pos , delta){
           SF.position.y = pos;
-          SF.rotation.y += Math.abs(  val  )  * delta * 4;
+          SF.rotation.y -= Math.abs(  val  )  * delta * 4;
         });
 
         scene.add( SF );
@@ -29,9 +36,14 @@
         var id = Math.floor( Math.random() * G.models.snowflakes.length);
         
 
-        var SF = new THREE.Mesh( G.models.window.geometry ,new THREE.MeshNormalMaterial({
-          side: THREE.DoubleSide
-        }));
+
+        var mat = new THREE.ShaderMaterial({
+          vertexShader: shaders.vs.window,
+          fragmentShader: shaders.fs.window,
+          uniforms: G.uniforms,
+        });
+
+        var SF = new THREE.Mesh( G.models.window.geometry , mat);
 
         SF.scale.multiplyScalar( 4.1);
         SF.rotation.y = Math.PI / 2;
@@ -70,29 +82,43 @@
 
         var SF = new THREE.Object3D();
 
-        var geo = new THREE.IcosahedronGeometry(1 , 2 );
-        var mat = new THREE.MeshNormalMaterial({
-          side: THREE.DoubleSide
+        var geo = new THREE.PlaneGeometry(4,3);
+        var mat = new THREE.ShaderMaterial({
+          vertexShader: shaders.vs.eyes,
+          fragmentShader: shaders.fs.eyes,
+          uniforms: G.uniforms,
+          transparent: true
+          //side: THREE.DoubleSide
         });
+        
         var eye1 = new THREE.Mesh(geo ,mat);
+        var eye2 = new THREE.Mesh(geo ,mat);
 
-        var eye2 = new THREE.Mesh(geo , mat);
 
-        eye1.position.x = .3; 
-        eye2.position.x = -.3; 
-
-        eye1.scale.multiplyScalar( .1 );
-        eye2.scale.multiplyScalar( .1 );
+        eye1.scale.multiplyScalar( .2 );
+        eye2.scale.multiplyScalar( .2 );
+        eye1.position.x = -.5;
+        eye2.position.x = .5;
 
 
         SF.add( eye1 );
         SF.add( eye2 );
 
 
+        eye1.update = function(){
+ 
+          this.updateMatrixWorld();
+          G.uniforms.iModelMat.value.getInverse( this.matrixWorld );
+
+        }.bind( eye1 );
+
+
         SF.position.y = position.y;
         SF.position.z = position.z - 1;
 
         SF.ogZ = SF.position.z;
+
+        G.eye = eye1;
 
         G.story.AddSmoothedEvent( position.y , position.y-1.5, function(val , pos , delta){
           SF.position.y = pos;
@@ -108,6 +134,8 @@
         G.story.AddSmoothedEvent( position.y-3.5 , position.y-6.5, function(val , pos , delta){
           SF.position.y = pos;
           //SF.position.z = SF.ogZ + 3 * val;
+
+          G.uniforms.eyesClosed.value = val * .5;
         });
 
 
@@ -115,6 +143,7 @@
         G.story.AddSmoothedEvent( position.y-6.5 , position.y-16.5, function(val , pos , delta){
           SF.position.y = pos;
           SF.position.z = SF.ogZ + 3 - 5 * (val * val);
+          G.uniforms.eyesClosed.value = .5 + val * .5;
         });
 
         //Death  Down
@@ -123,11 +152,32 @@
         });
 
         G.story.AddSmoothedEvent( position.y-120.5 , position.y-130.5, function(val , pos , delta){
-          SF.position.z = SF.ogZ - 2 - val * val * 10;
+          SF.position.z = SF.ogZ - 2 - val * val * 7;
           SF.position.y = pos;
+          G.uniforms.eyesClosed.value = 1-val;
         });
       
         scene.add( SF );
+
+
+        G.story.AddQuantizedEvent( position.y - 16.5 , function(Up,pos,delta){
+          if( Up == false ){
+            scene.remove(SF)
+          }else{
+            scene.add(SF)
+          }
+        });
+
+
+        G.story.AddQuantizedEvent( position.y - 120.5 , function(Up,pos,delta){
+          if( Up == false ){
+            scene.add(SF)
+          }else{
+            scene.remove(SF)
+          }
+        });
+
+      
 
       }
 
