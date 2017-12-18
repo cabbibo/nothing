@@ -3,7 +3,7 @@
 
         MakeText();
 
-        controls.minPos     = -148.4;
+        controls.minPos     = -148;
         controls.maxPos     =  0;
         controls.multiplier =  .0000001 * textParticles.totalHeight;
         controls.dampening  = .95;
@@ -26,7 +26,12 @@
 
         // FIRST SNOWFLAKE
         var l = new THREE.Vector3( 0 , -0,-1 );
-        AddSnowflake( l )
+        var sf = AddSnowflake( l )
+
+
+        console.log( sf );
+        sf.material.uniforms.saturation.value = 0;
+        sf.material.needsUpdate = true;
 
 
         G.story.AddQuantizedEvent( -.2 , function(UD,pos,delta){
@@ -213,9 +218,64 @@
             this.scale.y = this.startingScale * (1-val);
             this.scale.z = this.startingScale * (1-val);
           }.bind(snow));
+
+          var snow2Base = initSnowflake();
+
+          var scaleMultiplier = Math.random() * .1 + .1 
+          var z = Math.random() * 10 + 10;
+          var rad = 30 + Math.random() * 40 ;
+
+          for( var j = 0; j < 6; j ++ ){
+
+            var snow2 = new THREE.Mesh( snow2Base.geometry, snow2Base.material );
+            
+            
+            snow2.scale.multiplyScalar( scaleMultiplier );
+
+            snow2.position.z = z;
+
+            var p = new THREE.Cylindrical(rad, (j / 6 ) * 2 * Math.PI , 0);
+
+            var newP = new THREE.Vector3().setFromCylindrical( p );
+            newP.y = newP.z;
+            newP.z = 0;
+            snow2.position.add( newP );
+            snow2.rotation.y = 0;
+            snow2.rot = (Math.random()) * 3 + 1;
+
+            snow2.startingScale = snow2.scale.x;
+            snow2.snow = snow;
+
+            G.story.AddQuantizedEvent( -54 , function(Up,pos,delta){
+              if( Up == false ){
+                this.snow.add(this)
+              }else{
+                this.snow.remove(this)
+              }
+            }.bind(snow2));
+
+            G.story.AddScrollEvent(function(delta){
+
+             // this.rotation.z += this.rot * delta * .1; 
+              
+            }.bind(snow2));
+
+            G.story.AddSmoothedEvent( -125.5 , -135.5, function(val , pos , delta){
+              this.scale.x = this.startingScale * (1-val);
+              this.scale.y = this.startingScale * (1-val);
+              this.scale.z = this.startingScale * (1-val);
+            }.bind(snow2));
+
+          }
         }
 
 
+
+
+          G.story.AddSmoothedEvent( -106.5 , -109.5, function(val , pos , delta){
+
+            G.uniforms.golden.value = val;
+          }.bind(snow));
 
         var c =    2 * .5;
         var g =   (784 / 523) * .5;
@@ -253,7 +313,7 @@
         var logo = new THREE.Mesh(geo ,mat);
         logo.position.z = -.3;
         logo.position.y = -148.5;
-        scene.add(logo);
+        //scene.add(logo);
 
 
 

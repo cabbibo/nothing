@@ -97,7 +97,8 @@ function initSnowflake(){
         flakeID:{type:"f",value:Math.random()},
         t_matcap:G.uniforms.t_matcap,
         time:G.uniforms.time,
-        golden:G.uniforms.golden
+        golden:G.uniforms.golden,
+        saturation:{type:"f",value:1}
       },
       vertexShader: vs,
       fragmentShader: fs,

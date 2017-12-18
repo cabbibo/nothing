@@ -134,7 +134,7 @@ function loadOBJ( file , callback ){
       if ( child instanceof THREE.Mesh ) {
         callback(child);
       }else{
-        console.log("NOPE");
+        //console.log("NOPE");
       }
 
     });
@@ -164,12 +164,13 @@ function onLoad(){
 
   loadDiv.style.width = (( loaded / neededToLoad ) * window.innerWidth) + "px" 
   
-  loaderHolder.style.top = .5 * window.innerHeight + "px"
+  loaderHolder.style.top = .5 * window.innerHeight - .5 * loaderHolder.offsetWidth + "px"
 
-console.log("YUPPPPP")
+  //console.log("YUPPPPP")
 
-//document.getElementById("mydiv").offsetWidth
-  console.log( startButton.offsetWidth)
+  //document.getElementById("mydiv").offsetWidth
+
+  //console.log( startButton.offsetWidth)
   startButton.style.left =  .5 * window.innerWidth  - .5 * startButton.offsetWidth+ "px"
 
   if( neededToLoad == loaded ){

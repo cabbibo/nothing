@@ -26,8 +26,11 @@ void main(){
   float n = abs(snoise( vMPos * 10. + vec3( 0.,time * .3,0.)));
   float n2 = abs(snoise( vMPos * 2. + vec3( 0.,time * .1,0.)));
 
+  float fadeVal =  clamp( vEye.y-.5 + n + 3.*n2 ,0.,1.);
+  vec3 c1 = vec3(length(sem.xyz) );//sem.xyz * vec3( 1.,.4,.4);
+  vec3 c2 = vec3(length(sem.xyz) * length(sem.xyz));
 
-  vec3 col = mix( sem.xyz * vec3( 1.,.4,.4), vec3(length(sem.xyz) * length(sem.xyz)) * .3 , clamp( vEye.y + n+ 2.*n2 ,0.,1.) );
+  vec3 col = mix( c1 , c2 * .05 , fadeVal);
 
  // vec4 audio = texture2D( t_audio , vec2( lamb , 0. ));
   gl_FragColor = vec4( col , 1. );

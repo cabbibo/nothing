@@ -1,5 +1,6 @@
 
 uniform float time;
+uniform float flakeID;
 
 attribute float fade;
 attribute float edge;
@@ -21,7 +22,7 @@ $simplex
 
 void main(){
 
-  float n = snoise( position  * .01  + vec3( 0. , 0., time * .3 ));
+  float n = snoise( position  * .01  + vec3( 0. , 0., time * .3 + flakeID * 100. ));
   vec3 fPos = position + vec3( 0. , 0. , 2.) * n;
  
   vec4 mvPos = modelViewMatrix * vec4( fPos, 1.0 );

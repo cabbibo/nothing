@@ -7,6 +7,7 @@
 
         var SF = initSnowflake();
 
+
         console.log( SF );
 
         /* new THREE.Mesh( G.models.snowflakes[id].geometry ,new THREE.MeshNormalMaterial({
@@ -27,6 +28,8 @@
         });
 
         scene.add( SF );
+
+        return SF;
 
       }
 
@@ -194,6 +197,7 @@
          lineLength: 50,
          uniforms:{
           time: time,
+          golden: G.uniforms.golden,
          }  
         });
         

@@ -29,8 +29,4 @@ var linkInfo = [
   },
 
 
-  {
-    title: "Share on Twitter",
-    href: "http://twitter.com/share?&url=http://cabbi.bo/nothing/"
-  }
 ];

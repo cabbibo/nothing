@@ -2,7 +2,9 @@
 
 Hi! 
 
-If you are reading this, its most likely because you code.
+This source is garbage! Its only 6 minutes til its due so I haven't had much time to clean :)
+
+The coolest part is def 'Story.js' and Scroll controls
 
 
 
@@ -32,6 +34,7 @@ If you are reading this, its most likely because you code.
         background: none;
       }
 
+      
       #scrollInfo{
         z-index: 999;
         position: absolute;
@@ -82,7 +85,6 @@ If you are reading this, its most likely because you code.
     }
     a:hover{
       color: #fff;
-      font-weight:bold;
     }
     a:visited{
       color:#fff;
@@ -151,6 +153,25 @@ If you are reading this, its most likely because you code.
       height:100%;
     }
 
+      #social{
+        z-index: 999;
+        position: absolute;
+        right: 50px;
+        //width: 20px;
+        background: none;
+        bottom:-1000px;
+      }
+
+    #social a img{
+      height:15%;
+      float:right;
+      padding: 10px;
+    }
+    
+    #social img:hover{
+      background: #666;
+    }
+
 
     </style>
 
@@ -159,21 +180,21 @@ If you are reading this, its most likely because you code.
       <meta name="twitter:card" content="photo">
       <meta name="twitter:site" content="@cabbibo">
       <meta name="twitter:creator" content="@cabbibo">
-      <meta name="twitter:url" content="http://cabbi.bo/light">
-      <meta name="twitter:title" content="Love is All">
+      <meta name="twitter:url" content="http://cabbi.bo/nothing">
+      <meta name="twitter:title" content="Nothing in the face of this Love">
       <meta name="twitter:description" content="Though it is quiet, love has more power than the darkness ever will.">
       <meta name="twitter:creator" content="@cabbibo">
-      <meta name="twitter:image" content="http://cabbi.bo/light/image.png">
+      <meta name="twitter:image" content="http://cabbi.bo/nothing/image.png">
       <meta name="twitter:image:width" content="1440">
       <meta name="twitter:image:height" content="900">
       <meta name="twitter:domain" content="cabbi.bo">
       <meta itemprop="name" content="Cabbi.bo">
       <meta itemprop="description" content="Though it is quiet, love has more power than the darkness ever will.">
-      <meta itemprop="image" src="http://cabbi.bo/light/image.png">
+      <meta itemprop="image" src="http://cabbi.bo/nothing/image.png">
       <meta property="og:title" content="Though it is quiet, love has more power than the darkness ever will.">
       <meta property="og:type" content="website">
-      <meta property="og:url" content="http://cabbi.bo/light">
-      <meta property="og:image" content="http://cabbi.bo/light/image.png"/>
+      <meta property="og:url" content="http://cabbi.bo/nothing">
+      <meta property="og:image" content="http://cabbi.bo/nothing/image.png"/>
       <meta property="og:site_name" content="Cabbi.bo">
       <meta property="og:description" content="Though it is quiet, love has more power than the darkness ever will.">
 
@@ -193,6 +214,21 @@ If you are reading this, its most likely because you code.
   </div>
 </div>
 <div id="title"></div>
+<div id="social">
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=cabbi.bo/nothing" target="_blank"><img src="img/icons/facebook_2.png"/></a>
+
+  <a href="http://twitter.com/share?text=%22nothing%22%20%3A%20a%20winter%20sketch%20about%20the%20unknown.%20Created%20by%20%40cabbibo%20%3A&url=http://cabbi.bo/nothing/" target="_blank"><img src="img/icons/twitter_2.png"/></a>
+  <a href="http://cabbi.bo" target="_blank"><img src="img/icons/cabbibo_2.png"/></a>
+
+     <a href="https://donate.hackthehood.org/campaign/challengetech/c144492" target="_blank"><img src="https://assets.classy.org/2624837/9b2f5202-ba9c-11e7-bb1d-0a1bcf7a69c2.png"/></a>
+ 
+
+
+
+  
+
+</div>
 
     <!--<div id="pageUp">hey</div>
 
@@ -336,6 +372,9 @@ If you are reading this, its most likely because you code.
        infoBody.id ="infoBody";
        infoBody.innerHTML = "scroll  <br/> &#x2193; &#x2193; &#x2193;"
 
+
+       social = document.getElementById("social");
+
        document.body.appendChild( infoBody );
 
 
@@ -383,7 +422,7 @@ If you are reading this, its most likely because you code.
         if( window.mobileAndTabletcheck() ){
 
           //screen.orientation.lock();
-          controls.multiplier *= 6;;
+          controls.multiplier *= 4;
 
           camera.fov = 100 
           camera.updateProjectionMatrix()
@@ -449,6 +488,9 @@ If you are reading this, its most likely because you code.
 
         infoBody.style.top = 20 * camera.position.y + "px";
 
+        social.style.bottom = 40 * (-camera.position.y - 147) + "px";
+
+
 
 
 
@@ -493,13 +535,13 @@ var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 var isUnlocked = false;
 function unlock() {
       
-  console.log("MADE IT HERE");
-  console.log( iOS );
+  //console.log("MADE IT HERE");
+  //console.log( iOS );
   //if(iOS || this.unlocked)
   //  return;
 
 
-console.log("MADE IT HERE!")
+//console.log("MADE IT HERE!")
   // create empty buffer and play it
   var buffer = G.audio.ctx.createBuffer(1, 1, 22050);
   var source = G.audio.ctx.createBufferSource();
@@ -507,12 +549,12 @@ console.log("MADE IT HERE!")
   source.connect(G.audio.ctx.destination);
   source.start(0);
 
-  console.log("MADE IT HERE omg ")
+  //console.log("MADE IT HERE omg ")
 
   // by checking the play state after some time, we know if we're really unlocked
   setTimeout(function() {
     if((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
-      console.log("MADE IT HERE YAYY")
+     // console.log("MADE IT HERE YAYY")
       isUnlocked = true;
     }
   }, 100);

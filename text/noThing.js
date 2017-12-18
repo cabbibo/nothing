@@ -194,28 +194,28 @@ var noThing = `
 
 
 
-          I was surrounded by loved ones
+          I could tell it was coming
 
 
 
-          who were there with me until the end
+          And even though I couldn't
+          erase the dread,
 
 
 
-
-
-          but this final moment
-
-
-          was mine alone.
-
-
+          there was a deep peacefulness there.
+          
+          
 
 
 
 
 
+          
 
+          I began to leave this world on 
+
+          a journey was mine alone.
 
 
 
@@ -1900,7 +1900,7 @@ var noThing = `
 
 
 
-                The space after the gold
+                The space beyond the light
 
 
 
