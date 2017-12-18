@@ -286,7 +286,7 @@ screen.lockOrientation = screen.lockOrientation || screen.mozLockOrientation || 
           //screen.orientation.lock("portrait-primary");
           //screen.lockOrientation("landscape-primary");
            camera = new THREE.PerspectiveCamera( 80 , w/h , .1 , 100 );
-            controls.multiplier *= 10;//=  .0000001 * textParticles.totalHeight;
+            //controls.multiplier *= 10;//=  .0000001 * textParticles.totalHeight;
             renderer.setPixelRatio( dpr * .5 );
             renderer.setSize( window.innerWidth, window.innerHeight );
         }else{
