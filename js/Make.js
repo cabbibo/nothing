@@ -3,7 +3,7 @@
 
         MakeText();
 
-        controls.minPos     = -151.3;
+        controls.minPos     = -148.4;
         controls.maxPos     =  0;
         controls.multiplier =  .0000001 * textParticles.totalHeight;
         controls.dampening  = .95;
@@ -16,7 +16,7 @@
         for( var i = 0; i < linkInfo.length; i++ ){
 
          links[i] = new Link(font , linkInfo[i].title ,linkInfo[i].href  );
-         links[i].add( new THREE.Vector3( 0,-i*.15 - 150.3, 0));
+         links[i].add( new THREE.Vector3( 0,-i*.15 - 147.3, 0));
 
         }
 
@@ -252,7 +252,7 @@
         
         var logo = new THREE.Mesh(geo ,mat);
         logo.position.z = -.3;
-        logo.position.y = -151.5;
+        logo.position.y = -148.5;
         scene.add(logo);
 
 
