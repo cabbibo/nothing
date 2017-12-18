@@ -14,14 +14,14 @@ $semLookup
 
 void main(){
 
-	vec3 fNorm = vNorm; //uvNormalMap( t_normal , vPos , vUv  , vNorm , 4.1 , 1.1 );
+	vec3 fNorm = uvNormalMap( t_normal , vPos , vUv  , vNorm , 1.4 , 1.1 );
 
 
-  vec2 semLU = semLookup( normalize( vEye ) , fNorm );
+  vec2 semLU = semLookup( normalize( vEye ) , vNorm );
   vec4 sem = texture2D( t_matcap , semLU );
 
  // vec4 audio = texture2D( t_audio , vec2( lamb , 0. ));
-  gl_FragColor = vec4( sem.xyz , 1. );
+  gl_FragColor = vec4( vec3(length(sem.xyz * .3)), 1. );
 
 
 }

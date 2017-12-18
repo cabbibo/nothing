@@ -99,6 +99,10 @@ function LoadItAll(){
     G.uniforms.t_matcap.value = texture
   });
 
+  loadTexture('img/t_n_burled.png',function(texture){
+    G.uniforms.t_normal.value = texture
+  });
+
 
   loadTexture('img/icons/cabbibo.png',function(texture){
     G.logoTexture = texture
@@ -159,6 +163,14 @@ function onLoad(){
   loaded ++;
 
   loadDiv.style.width = (( loaded / neededToLoad ) * window.innerWidth) + "px" 
+  
+  loaderHolder.style.top = .5 * window.innerHeight + "px"
+
+console.log("YUPPPPP")
+
+//document.getElementById("mydiv").offsetWidth
+  console.log( startButton.offsetWidth)
+  startButton.style.left =  .5 * window.innerWidth  - .5 * startButton.offsetWidth+ "px"
 
   if( neededToLoad == loaded ){
     init();

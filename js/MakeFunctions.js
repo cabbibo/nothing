@@ -45,7 +45,7 @@
 
         var SF = new THREE.Mesh( G.models.window.geometry , mat);
 
-        SF.scale.multiplyScalar( 4.1);
+        SF.scale.multiplyScalar( 6.1);
         SF.rotation.y = Math.PI / 2;
         SF.position.y = position.y;
         SF.position.z = position.z;
@@ -82,7 +82,7 @@
 
         var SF = new THREE.Object3D();
 
-        var geo = new THREE.PlaneGeometry(4,3);
+        var geo = new THREE.PlaneGeometry(5,3);
         var mat = new THREE.ShaderMaterial({
           vertexShader: shaders.vs.eyes,
           fragmentShader: shaders.fs.eyes,
@@ -97,8 +97,8 @@
 
         eye1.scale.multiplyScalar( .2 );
         eye2.scale.multiplyScalar( .2 );
-        eye1.position.x = -.5;
-        eye2.position.x = .5;
+        eye1.position.x = -.7;
+        eye2.position.x = .7;
 
 
         SF.add( eye1 );
@@ -152,7 +152,7 @@
         });
 
         G.story.AddSmoothedEvent( position.y-120.5 , position.y-130.5, function(val , pos , delta){
-          SF.position.z = SF.ogZ - 2 - val * val * 7;
+          SF.position.z = SF.ogZ + 4 - val * val * 5;
           SF.position.y = pos;
           G.uniforms.eyesClosed.value = 1-val;
         });

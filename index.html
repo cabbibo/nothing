@@ -128,11 +128,9 @@ If you are reading this, its most likely because you code.
     #startButton{
       border:1px solid white;
       visibility: hidden;
-      width:20%;
-      left:40%;
       position:absolute;
       text-align: center;
-      padding:10px;
+      padding:5px;
       top:5px;
       background: #000;
       //position: fixed;
@@ -150,7 +148,7 @@ If you are reading this, its most likely because you code.
       border:3px solid white;
     }
     #description{
-      padding:10%;
+      height:100%;
     }
 
 
@@ -183,24 +181,16 @@ If you are reading this, its most likely because you code.
 
   <body style="margin:0px">
 <div id="duringLoad">
-  <div id="loaderHolder"><div id="loadbar"></div></div>
-  <div id="description">
-    <p>
-  Hey!<br/>
-    So this is a talk I gave at <a target="_blank" href="http://nextart.tech/"> Next Art Night </a> which is a parsed down version of one that I originally presented at Pixar.
-    <br/><br/>
-    I've been trying to think of how exactly to be taking these interactive speeches, and putting them up for others to experience. 
-    I don't know how well it works, but I would love to hear what you think of it. Hit me up on <a target="_blank" href="http://twitter.com/cabbibo">twitter : @cabbibo </a> or <a target="_blank" href="mailto:hello@cabbi.bo">email me: hello@cabbi.bo</a>
-    <br/>
-    Runtime: 15 min
-    <br/><br/>
-    - Isaac
-    <br/>
+  <div id="loaderHolder">
 
-    </p>
+  <div id="loadbar"></div>
+
+  <div id="startButton" onclick="beginItAll()">START</div>
+  </div>
+  <div id="description" style="visibility: hidden">
+
 
   </div>
-  <div id="startButton" onclick="beginItAll()">START</div>
 </div>
 <div id="title"></div>
 
@@ -286,6 +276,8 @@ If you are reading this, its most likely because you code.
       var loaded = 0;
 
       var loadDiv = document.getElementById( "loadbar");
+      var startButton = document.getElementById( "startButton");
+      var loaderHolder = document.getElementById( "loaderHolder");
 
       var G = {}
       G.sounds = {}
@@ -300,10 +292,14 @@ If you are reading this, its most likely because you code.
         iModelMat:{ type:"m4" , value: new THREE.Matrix4() },
         audio: { type:"t" , value:null},
         t_matcap: { type:"t", value:null},
+        t_normal: { type:"t", value:null},
         eyesClosed:{type:"f",value:0},
         filled:{type:"f" , value:1},
         heartDeath:{type:"f",value:0},
         golden:{type:"f",value:0},
+        scrollVal:{type:"f",value:0},
+
+
       }
 
       G.audio  = new AudioController();
@@ -421,6 +417,8 @@ If you are reading this, its most likely because you code.
         G.uniforms.time.value = time.value;
 
 
+        G.uniforms.scrollVal.value = camera.position.y/-150;
+
         objectControls.update();
 
         G.paginator.update();
@@ -532,6 +530,7 @@ console.log("MADE IT HERE!")
     removeLoadingStuff();
     animate();
     document.getElementById("startButton").style.visibility = "hidden";
+    document.getElementById("infoBody").style.visibility = "visible";
     //turnToPage( 5 );
   }
 
@@ -543,6 +542,8 @@ console.log("MADE IT HERE!")
 
 
 function addStartButton(){
+
+    document.getElementById("infoBody").style.visibility = "hidden";
   document.getElementById("startButton").style.visibility = "visible";
 }
 

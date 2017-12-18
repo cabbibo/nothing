@@ -2,6 +2,8 @@
 uniform float time;
 uniform float eyesClosed;
 
+uniform float scrollVal;
+
 varying vec3 vNorm;
 varying vec2 vUv;
 varying vec3 vMPos;
@@ -58,42 +60,52 @@ void main(){
 
     float retinaRadius = 0.35;
     float retinaFade = 0.15;
-    vec3 retinaColor = vec3(0.05);
+    vec3 retinaColor = vec3(0.00);
 
     float eyeballRadius = 1.0;
     vec3 eyeballColor = vec3(1.);
     
     float noiseEdges = 32.;
 
-    float open = 1.-eyesClosed;//sin(time)*0.5+0.5;
+    float open = .9-eyesClosed * .5;//sin(time)*0.5+0.5;
     
     
     vec2 uv = vUv;
     vec2 puv = (uv * 2.2 - 1.1);
 
-    puv.x *= (4./3.);
+    puv.x *= (5./3.);
 
     float l = length(puv);
     float angle = (atan(puv.y, puv.x)/3.14159)*noiseEdges*0.25;
     float n = fbm(vec2(l*2.,angle)*1., noiseEdges)*2.;
-    vec3 col = vec3(fbm(vec2(l,n),noiseEdges));
-    col = sin(col*vec3(.0,0.66,.66)+n*4. + l*5. + time)*0.5+0.4;
+    vec3 col = vec3(fbm(vec2(l-scrollVal * 100.,n),noiseEdges));
+    col = col;//sin(col*vec3(.0,0.66,.66)+n*4. + l*5. + time)*0.5+0.4;
+   // if( scrollVal > .6 ){
+    col = abs(col);
+        col = abs(sin(col * 10.));
+
+    if( scrollVal > .6){ 
+        col = vec3(col.x *.5 + .8,.5 * col.x + .4,0.);
+    }
     
     vec2 retinaPosition = puv + vec2(0., (1.0-open)*0.15);
     float retinaLength = length(retinaPosition);
+
+
     col = mix(retinaColor,col, smoothstep(retinaRadius, retinaRadius+retinaFade, retinaLength)); 
     col = mix(col,eyeballColor,smoothstep(eyeballRadius, eyeballRadius+retinaFade, retinaLength)); 
    
-    col = mix(col, vec3(0.), smoothstep(open,open+0.05, uv.y + open*0.25*(cos(uv.x*3.14159*2.)*0.5+0.5) ));
+    col = mix(col, vec3(0.), smoothstep(open,open+0.05, uv.y + open*1.*(-cos((uv.x-.5)*3.14159*1.)*0.5+0.5) ));
+    col = mix(col, vec3(0.), smoothstep(open,open+0.05, 1.-uv.y + open*1.*(-cos((uv.x-.5)*3.14159*1.)*0.5+0.5) ));
     
-    if( retinaLength > 1.){
+    /*if( retinaLength > 1.){
         discard;
-    }
+    }*/
 
 
     
  // vec4 audio = texture2D( t_audio , vec2( lamb , 0. ));
-  gl_FragColor = vec4( col , 1.- retinaLength * retinaLength * retinaLength * retinaLength  );
+  gl_FragColor = vec4( col , 1.  );
 
 
 }

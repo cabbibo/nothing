@@ -9,6 +9,9 @@
         controls.dampening  = .95;
 
 
+        FadeLoop(G.audio.buffers.enviornment1.buffer, 0.1 , .2 , -.2 , -120, -135 );
+
+
         links = [];
         for( var i = 0; i < linkInfo.length; i++ ){
 
@@ -183,7 +186,7 @@
 
         for( var i = 0; i < 6; i ++ ){
           var snow = initSnowflake();
-          snow.scale.multiplyScalar( .3  - .28 * (Math.pow( i/6 , .7)));
+          snow.scale.multiplyScalar( (.3  - .28 * (Math.pow( i/6 , .7))) );
           snow.position.z = -30 + i;
           snow.position.y = -90;
           snow.rotation.y = 0;
