@@ -103,9 +103,9 @@ If you are reading this, its most likely because you code.
   <body>
     <div id="scrollInfo">hey</div>
 
-    <div id="pageUp">hey</div>
+    <!--<div id="pageUp">hey</div>
 
-    <div id="pageDown">&#x2193;</div>
+    <div id="pageDown">&#x2193;</div>-->
 
     <script src="lib/three.min.js">             </script>
     <script src="lib/jquery.min.js">            </script>
@@ -226,6 +226,7 @@ If you are reading this, its most likely because you code.
       document.body.addEventListener("mousewheel", function(e){ e.preventDefault(); });
 
      
+screen.lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
 
 
       function init(){
@@ -281,8 +282,10 @@ If you are reading this, its most likely because you code.
 
         if( window.mobileAndTabletcheck() ){
           console.log("HA")
-          window.screen.lockOrientation("landscape-primary");
-           camera = new THREE.PerspectiveCamera( 40 , w/h , .1 , 100 );
+          console.log( screen );
+          //screen.orientation.lock("portrait-primary");
+          //screen.lockOrientation("landscape-primary");
+           camera = new THREE.PerspectiveCamera( 80 , w/h , .1 , 100 );
             controls.multiplier *= 10;//=  .0000001 * textParticles.totalHeight;
             renderer.setPixelRatio( dpr * .5 );
             renderer.setSize( window.innerWidth, window.innerHeight );

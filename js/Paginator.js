@@ -28,13 +28,13 @@ function Paginator(){
 
 
 
-  document.getElementById("pageUp").addEventListener('click', function (event) {
+  /*document.getElementById("pageUp").addEventListener('click', function (event) {
             this.pageUp();
         }.bind( this ));
 
   document.getElementById("pageDown").addEventListener('click', function (event) {
             this.pageDown();
-        }.bind( this ));
+        }.bind( this ));*/
 
 }
 
