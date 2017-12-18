@@ -21,7 +21,7 @@ If you are reading this, its most likely because you code.
       font-weight: 300;
       font-style: normal;
       color: #ffffff;
-      background: #ff0000; }
+      background: #000000; }
       
 
       #infoBody{
@@ -495,9 +495,12 @@ var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 var isUnlocked = false;
 function unlock() {
       
+  console.log("MADE IT HERE");
   if(iOS || this.unlocked)
     return;
 
+
+console.log("MADE IT HERE!")
   // create empty buffer and play it
   var buffer = G.audio.ctx.createBuffer(1, 1, 22050);
   var source = G.audio.ctx.createBufferSource();
@@ -505,9 +508,12 @@ function unlock() {
   source.connect(G.audio.ctx.destination);
   source.start(0);
 
+  console.log("MADE IT HERE omg ")
+
   // by checking the play state after some time, we know if we're really unlocked
   setTimeout(function() {
     if((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
+      console.log("MADE IT HERE YAYY")
       isUnlocked = true;
     }
   }, 100);
