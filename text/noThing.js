@@ -215,7 +215,7 @@ var noThing = `
 
           I began to leave this world on 
 
-          a journey was mine alone.
+          a journey that was mine alone.
 
 
 
